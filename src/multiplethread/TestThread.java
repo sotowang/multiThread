@@ -25,11 +25,40 @@ public class TestThread {
         leesin.hp = 455;
         leesin.damage = 80;
 
-        Battle battle1 = new Battle(gareen,teemo);
+//        Battle battle1 = new Battle(gareen,teemo);
+//
+//        new Thread(battle1).start();
+//
+//        Battle battle2 = new Battle(bh,leesin);
+//        new Thread(battle2).start();
 
-        new Thread(battle1).start();
+        Thread t1= new Thread(){
+            public void run(){
+                while(!teemo.isDead()){
+                    gareen.attackHero(teemo);
+                }
+            }
+        };
 
-        Battle battle2 = new Battle(bh,leesin);
-        new Thread(battle2).start();
+        t1.start();
+
+        //代码执行到这里，一直是main线程在运行
+        try {
+            //t1线程加入到main线程中来，只有t1线程运行结束，才会继续往下走
+            t1.join();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        Thread t2= new Thread(){
+            public void run(){
+                while(!leesin.isDead()){
+                    bh.attackHero(leesin);
+                }
+            }
+        };
+        //会观察到盖伦把提莫杀掉后，才运行t2线程
+        t2.start();
     }
 }
